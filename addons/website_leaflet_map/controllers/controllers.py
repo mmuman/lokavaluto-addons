@@ -26,13 +26,17 @@ class LeafletMap(http.Controller):
     @http.route(['/leaflet_map'], type='http', auth='public', website=True)
     def leaflet_map(self, *arg, **post):
         clean_ids = []
-        for partner_id in post.get('partner_ids', "").split(","):
-            try:
+        search_domain = []
+        try:
+            for partner_id in post.get('partner_ids', "").split(","):
                 clean_ids.append(int(partner_id))
-            except ValueError:
-                pass
-        partners = request.env['res.partner'].sudo().search([("id", "in", clean_ids),
-                                                             ('website_published', '=', True), ('is_company', '=', True)])
+            if len(clean_ids):
+                search_domain.append(("id", "in", clean_ids))
+        #except ValueError:
+        except Exception:
+            pass
+        search_domain.extend([('website_published', '=', True), ('is_company', '=', True)])
+        partners = request.env['res.partner'].sudo().search(search_domain)
         partner_data = {
             "counter": len(partners),
             "partners": []
