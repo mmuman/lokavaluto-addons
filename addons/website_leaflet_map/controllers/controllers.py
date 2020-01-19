@@ -36,7 +36,7 @@ class LeafletMap(http.Controller):
         except Exception:
             pass
         search_domain.extend([('website_published', '=', True), ('is_company', '=', True)])
-        partners = request.env['res.partner'].sudo().search(search_domain)
+        partners = request.env['res.partner'].search(search_domain)
         partner_data = {
             "counter": len(partners),
             "partners": []
